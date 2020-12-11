@@ -1,6 +1,13 @@
 ﻿#include <iostream>
 #include <vector>
 #include <cmath>
+
+template <typename T>
+struct data
+{
+	T value;
+};
+
 template <typename T>
 struct AVL_tree_node
 {
@@ -18,12 +25,12 @@ struct Print_it
 };
 
 template <typename T>
-void constructor_tree(AVL_tree_node<T>* p, T n)
+void constructor_tree(AVL_tree_node<T>* p, data<T> n)
 {
 	p->left = nullptr;
 	p->right = nullptr;
 	p->height = 1;
-	p->value = n;
+	p->value = n.value;
 }
 
 template <typename T>
@@ -104,7 +111,7 @@ AVL_tree_node<T>* balance(AVL_tree_node<T>* p)
 }
 
 template <typename T>
-AVL_tree_node<T>* insert(AVL_tree_node<T>* p, T n)
+AVL_tree_node<T>* insert(AVL_tree_node<T>* p, data<T> n)
 {
 	if (p == nullptr)
 	{
@@ -112,7 +119,7 @@ AVL_tree_node<T>* insert(AVL_tree_node<T>* p, T n)
 		constructor_tree(rez, n);
 		return rez;
 	}
-	if (n < p->value)
+	if (n.value < p->value)
 	{
 		p->left = insert(p->left, n);
 	}
@@ -148,18 +155,18 @@ AVL_tree_node<T>* delete_min(AVL_tree_node<T>* p)
 }
 
 template <typename T>
-AVL_tree_node<T>* delete_node(AVL_tree_node<T>* p, T n)
+AVL_tree_node<T>* delete_node(AVL_tree_node<T>* p, data<T> n)
 {
 	if (p->height == 0)
 	{
 		std::cout << "Tree is empty" << std::endl;
 		return 0;
 	}
-	if (n < p->value)
+	if (n.value < p->value)
 	{
 		p->left = delete_node(p->left, n);
 	}
-	else if (n > p->value)
+	else if (n.value > p->value)
 	{
 		p->right = delete_node(p->right, n);
 	}
@@ -313,15 +320,19 @@ int main()
 
 	AVL_tree_node<int>* tree0 = new AVL_tree_node<int>;
 	tree0 = nullptr;
+	data<int> tmp;
 	//constructor_tree(tree0);
 	for (int i = 0; i < 10; ++i)
 	{
-		tree0 = insert(tree0, i);
+		tmp.value = i;
+		tree0 = insert(tree0, tmp);
 	}
 	show_tree(tree0);
 	std::cout << std::endl << "-----------------" << std::endl;
-	tree0 = delete_node(tree0, 3);
-	tree0 = delete_node(tree0, 7);
+	tmp.value = 3;
+	tree0 = delete_node(tree0, tmp);
+	tmp.value = 7;
+	tree0 = delete_node(tree0, tmp);
 	show_tree(tree0);
 	destructor_tree(tree0);
 	return 0;
