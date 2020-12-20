@@ -193,10 +193,11 @@ void show_tree(AVL_tree_node<T>* p)
 	if (p != nullptr)
 	{
 		std::vector<Print_it<T>> prints;
-		show(p, 200, prints, 4);
+		int lvl = height_of(p);
+		show(p, 200, prints, lvl);
 		Print_it<T> line;
 		line.value = -1;
-		int lvl = height_of(p);
+		
 		int spaces = static_cast<int>(pow(2, (lvl - 1)));
 		for (int i = lvl; i > 0; --i)
 		{
