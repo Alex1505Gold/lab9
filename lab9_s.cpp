@@ -1,5 +1,6 @@
 ﻿#include <iostream>
 #include <vector>
+#include <cmath>
 #define temp template <typename T>
 
 temp
@@ -120,7 +121,7 @@ AVL_p<T>* rotate_right_big(AVL_p<T>* p)
 }
 
 temp
-AVL_p<T>* balance(AVL_p<T>* p)
+AVL_p<T>* balance(AVL_p<T>* p) // проверка на баланс и обновление высоты
 {
     set_height(p);
     if (branch_dif(p) == 2)
@@ -169,16 +170,96 @@ AVL_p<T>* insert(AVL_p<T>* p, T n)
 }
 
 temp
+AVL_p<T>* find_max(AVL_p<T>* p)
+{
+	if (p->right != nullptr)
+	{
+		return find_max(p->right);
+	}
+	else
+	{
+		return p;
+	}
+}
+
+temp
+AVL_p<T>* find_prev_max(AVL_p<T>* p, AVL_p<T>* max)
+{
+	if (p == max)
+	{
+		return p;
+	}
+	if (p->right == max)
+	{
+		return p;
+	}
+	else
+	{
+		return find_prev_max(p->right, max);
+	}
+}
+
+temp
+AVL_p<T>* delete_node(AVL_p<T>* p, T n)
+{
+	if (height_of(p) == 0)
+	{
+		std::cout << "Tree is empty" << std::endl;
+		return 0;
+	}
+	if (p->value > n)
+	{
+		p->left = delete_node(p->left, n);
+	}
+	else if (p->value < n)
+	{
+		p->right = delete_node(p->right, n);
+	}
+	else
+	{
+		AVL_p<T>* cur_left = p->left;
+		AVL_p<T>* cur_right = p->right;
+		delete p;
+		if (cur_left == nullptr && cur_right == nullptr) // p - leaf
+		{
+			return nullptr;
+		}
+		else
+		{
+			AVL_p<T>* max = find_max(cur_left);
+			
+				AVL_p<T>* prev_max = find_prev_max(cur_left, max);
+				if (prev_max == max)  //ситуация, что самый близкий к р это его левый элемент
+				{
+					max->right = cur_right;
+					return (balance(max));
+				}
+				else
+				{
+					prev_max->right = max->left;
+					prev_max = balance(prev_max);
+					max->left = cur_left;
+					max->right = cur_right;
+					return balance(max);
+				}
+			
+		}
+	}
+	return balance(p);
+}
+
+temp
 void show_tree(AVL_p<T>* p)
 {
 	if (p != nullptr)
 	{
+		//нужно создать массив из элементов принтс, у которых есть значение и уровень
 		std::vector<Print_it<T>> prints;
 		int lvl = height_of(p);
 		show(p, 200, prints, lvl);
 		Print_it<T> line;
 		line.value = -1;
-
+		//вывод сначала тех принтсов, у которых уровень выше
 		int spaces = static_cast<int>(pow(2, (lvl - 1)));
 		for (int i = lvl; i > 0; --i)
 		{
@@ -211,14 +292,9 @@ void show_tree(AVL_p<T>* p)
 }
 
 temp
-AVL_p<T> find_max(AVL_p<T>* p)
-{
-	;
-}
-
-temp
 void show(AVL_p<T>* p, int k, std::vector<Print_it<T>>& prints, int cur_h)
 {
+	// 200 - корень, 100 - узел или лист, 101 - выход
 	if (p != nullptr)
 	{
 		Print_it<T> n;
@@ -308,11 +384,23 @@ int main()
 	tree0 = nullptr;
 	data<int> tmp;
 	//constructor_tree(tree0);
-	for (int i = 0; i < 10; ++i)
+	for (int i = 0; i <= 12; ++i)
 	{
 		tmp.value = i;
 		tree0 = insert(tree0, tmp.value);
 	}
+	show_tree(tree0);
+	tmp.value = 7;
+	tree0 = delete_node(tree0, tmp.value);
+	std::cout << "----------------------\n";
+	show_tree(tree0);
+    tmp.value = 1;
+	tree0 = delete_node(tree0, tmp.value);
+	std::cout << "----------------------\n";
+	show_tree(tree0);
+	tmp.value = 3;
+	tree0 = delete_node(tree0, tmp.value);
+	std::cout << "----------------------\n";
 	show_tree(tree0);
 	delete_tree(tree0);
 }
