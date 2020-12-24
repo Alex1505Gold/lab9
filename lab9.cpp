@@ -3,7 +3,7 @@
 #include <cmath>
 
 template <typename T>
-struct data
+struct data    //структура для передачи данных в дерево
 {
 	T value;
 };
@@ -18,7 +18,7 @@ struct AVL_tree_node
 };
 
 template <typename T>
-struct Print_it
+struct Print_it    //структура для вывода на экран
 {
 	T value;
 	int level;
@@ -82,8 +82,8 @@ AVL_tree_node<T>* rotate_left(AVL_tree_node<T>* q)
 	AVL_tree_node<T>* p = q->right;
 	q->right = p->left;
 	p->left = q;
-	set_height(p);
 	set_height(q);
+	set_height(p);
 	return p;
 }
 
@@ -157,7 +157,7 @@ AVL_tree_node<T>* delete_min(AVL_tree_node<T>* p)
 template <typename T>
 AVL_tree_node<T>* delete_node(AVL_tree_node<T>* p, data<T> n)
 {
-	if (p->height == 0)
+	if (height_of(p) == 0)
 	{
 		std::cout << "Tree is empty" << std::endl;
 		return 0;
@@ -193,11 +193,8 @@ void show_tree(AVL_tree_node<T>* p)
 	if (p != nullptr)
 	{
 		std::vector<Print_it<T>> prints;
-		int lvl = height_of(p);
+		int lvl = p->height;
 		show(p, 200, prints, lvl);
-		Print_it<T> line;
-		line.value = -1;
-		
 		int spaces = static_cast<int>(pow(2, (lvl - 1)));
 		for (int i = lvl; i > 0; --i)
 		{
@@ -235,7 +232,7 @@ void show(AVL_tree_node<T>* p, int k, std::vector<Print_it<T>>& prints, int cur_
 	if (p != nullptr)
 	{
 		Print_it<T> n;
-		if (k == 200)
+		if (k == 200)//200 ключ того, что мы находимся в корне дерева
 		{
 			n.level = height_of(p);
 			n.value = p->value;
@@ -263,7 +260,7 @@ void show(AVL_tree_node<T>* p, int k, std::vector<Print_it<T>>& prints, int cur_
 			show(p->left, 100, prints, cur_h - 1);
 			show(p->right, 100, prints, cur_h - 1);
 		}
-		if (k == 100)
+		if (k == 100)//100 - ключ того, что это не корень
 		{
 			if ((p->left != nullptr) || (p->right != nullptr))
 			{
@@ -295,7 +292,7 @@ void show(AVL_tree_node<T>* p, int k, std::vector<Print_it<T>>& prints, int cur_
 				n.value = -1;
 				prints.push_back(n);
 				prints.push_back(n);
-				show(p->left, 101, prints, cur_h - 1);
+				show(p->left, 101, prints, cur_h - 1);//101 - ключ конца дерева
 				show(p->right, 101, prints, cur_h - 1);
 			}
 		}
