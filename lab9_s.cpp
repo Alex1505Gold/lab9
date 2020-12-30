@@ -46,12 +46,6 @@ struct AVL_tree
 };
 
 temp
-struct data
-{
-	T value;
-};
-
-temp
 struct Print_it
 {
     T value;
@@ -449,24 +443,19 @@ void delete_tree(AVL_tree<T>& p)
 int main()
 {
 	AVL_tree<int> tree0;
-	data<int> tmp;
 	consrtuct_tree(tree0);
 	for (int i = 0; i <= 12; ++i)
 	{
-		tmp.value = i;
-		insert_tree(tree0, tmp.value);
+		insert_tree(tree0, i);
 	}
 	show_tree(tree0);
-	tmp.value = 7;
-	remove_from_tree(tree0, tmp.value);
+	remove_from_tree(tree0, 7);
 	std::cout << "----------------------\n";
 	show_tree(tree0);
-    tmp.value = 1;
-	remove_from_tree(tree0, tmp.value);
+	remove_from_tree(tree0, 1);
 	std::cout << "----------------------\n";
 	show_tree(tree0);
-	tmp.value = 3;
-	remove_from_tree(tree0, tmp.value);
+	remove_from_tree(tree0, 3);
 	std::cout << "----------------------\n";
 	show_tree(tree0);
 	delete_tree(tree0);
