@@ -2,7 +2,6 @@
 #include <vector>
 #include <cmath>
 #define temp template <typename T>
-
 temp
 struct AVL_p
 {
@@ -10,6 +9,12 @@ struct AVL_p
     AVL_p* right;
     unsigned short int height;
     T value;
+};
+
+temp 
+struct AVL_tree
+{
+	AVL_p<T>* root;
 };
 
 temp
@@ -24,6 +29,12 @@ struct Print_it
     T value;
     int level;
 };
+
+temp
+void consrtuct_tree(AVL_tree<T>& p)
+{
+	p.root = nullptr;
+}
 
 temp
 AVL_p<T>* construct(AVL_p<T>* p, T n)
@@ -170,6 +181,12 @@ AVL_p<T>* insert(AVL_p<T>* p, T n)
 }
 
 temp
+void insert_tree(AVL_tree<T>& p, T value)
+{
+	p.root = insert(p.root, value);
+}
+
+temp
 AVL_p<T>* find_max(AVL_p<T>* p)
 {
 	if (p->right != nullptr)
@@ -249,14 +266,20 @@ AVL_p<T>* delete_node(AVL_p<T>* p, T n)
 }
 
 temp
-void show_tree(AVL_p<T>* p)
+void delete_from_tree(AVL_tree<T>& p, T value)
 {
-	if (p != nullptr)
+	p.root = delete_node(p.root, value);
+}
+
+temp
+void show_tree(AVL_tree<T>& p)
+{
+	if (p.root != nullptr)
 	{
 		//нужно создать массив из элементов принтс, у которых есть значение и уровень
 		std::vector<Print_it<T>> prints;
-		int lvl = height_of(p);
-		show(p, 200, prints, lvl);
+		int lvl = height_of(p.root);
+		show(p.root, 200, prints, lvl);
 		Print_it<T> line;
 		line.value = -1;
 		//вывод сначала тех принтсов, у которых уровень выше
@@ -368,38 +391,43 @@ void show(AVL_p<T>* p, int k, std::vector<Print_it<T>>& prints, int cur_h)
 }
 
 temp
-void delete_tree(AVL_p<T>* p)
+void delete_p(AVL_p<T>* p)
 {
 	if (p != nullptr)
 	{
-		delete_tree(p->left);
-		delete_tree(p->right);
+		delete_p(p->left);
+		delete_p(p->right);
 		delete p;
 	}
 }
 
+temp
+void delete_tree(AVL_tree<T>& p)
+{
+	delete_p(p.root);
+}
+
 int main()
 {
-	AVL_p<int>* tree0 = new AVL_p<int>;
-	tree0 = nullptr;
+	AVL_tree<int> tree0;
 	data<int> tmp;
-	//constructor_tree(tree0);
+	consrtuct_tree(tree0);
 	for (int i = 0; i <= 12; ++i)
 	{
 		tmp.value = i;
-		tree0 = insert(tree0, tmp.value);
+		insert_tree(tree0, tmp.value);
 	}
 	show_tree(tree0);
 	tmp.value = 7;
-	tree0 = delete_node(tree0, tmp.value);
+	delete_from_tree(tree0, tmp.value);
 	std::cout << "----------------------\n";
 	show_tree(tree0);
     tmp.value = 1;
-	tree0 = delete_node(tree0, tmp.value);
+	delete_from_tree(tree0, tmp.value);
 	std::cout << "----------------------\n";
 	show_tree(tree0);
 	tmp.value = 3;
-	tree0 = delete_node(tree0, tmp.value);
+	delete_from_tree(tree0, tmp.value);
 	std::cout << "----------------------\n";
 	show_tree(tree0);
 	delete_tree(tree0);
