@@ -491,4 +491,5 @@ int main()
 	insert_tree(tree1, p7);
 	show_tree(tree1);
 	delete_tree(tree1);
+	return 0;
 }
