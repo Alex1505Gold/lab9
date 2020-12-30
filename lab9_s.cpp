@@ -2,6 +2,34 @@
 #include <vector>
 #include <cmath>
 #define temp template <typename T>
+
+struct pair_temp
+{
+	int key;
+	std::string value;
+};
+
+bool operator>(const pair_temp& left, const pair_temp& right)
+{
+	return left.key > right.key;
+}
+
+bool operator<(const pair_temp& left, const pair_temp& right)
+{
+	return left.key < right.key;
+}
+
+bool operator==(const pair_temp& left, const pair_temp& right)
+{
+	return left.key == right.key;
+}
+
+std::ostream& operator<<(std::ostream& out, const pair_temp& p)
+{
+	out << p.key;
+	return out;
+}
+
 temp
 struct AVL_p
 {
@@ -266,9 +294,20 @@ AVL_p<T>* delete_node(AVL_p<T>* p, T n)
 }
 
 temp
-void delete_from_tree(AVL_tree<T>& p, T value)
+void remove_from_tree(AVL_tree<T>& p, T value)
 {
 	p.root = delete_node(p.root, value);
+}
+
+void plug(int& n)
+{
+	n = -1;
+}
+
+void plug(pair_temp& p)
+{
+	p.key = -1;
+	p.value = "-";
 }
 
 temp
@@ -281,7 +320,7 @@ void show_tree(AVL_tree<T>& p)
 		int lvl = height_of(p.root);
 		show(p.root, 200, prints, lvl);
 		Print_it<T> line;
-		line.value = -1;
+		plug(line.value);
 		//вывод сначала тех принтсов, у которых уровень выше
 		int spaces = static_cast<int>(pow(2, (lvl - 1)));
 		for (int i = lvl; i > 0; --i)
@@ -294,7 +333,7 @@ void show_tree(AVL_tree<T>& p)
 					{
 						std::cout << " ";
 					}
-					if (prints[j].value == -1)
+					if (prints[j].value == line.value)
 					{
 						std::cout << "-";
 					}
@@ -333,7 +372,7 @@ void show(AVL_p<T>* p, int k, std::vector<Print_it<T>>& prints, int cur_h)
 			}
 			else
 			{
-				n.value = -1;//заглушка
+				plug(n.value);//заглушка
 			}
 			prints.push_back(n);
 			if (p->right != nullptr)
@@ -342,7 +381,7 @@ void show(AVL_p<T>* p, int k, std::vector<Print_it<T>>& prints, int cur_h)
 			}
 			else
 			{
-				n.value = -1;//заглушка
+				plug(n.value);//заглушка
 			}
 			prints.push_back(n);
 			cur_h = height_of(p) - 1;
@@ -360,7 +399,7 @@ void show(AVL_p<T>* p, int k, std::vector<Print_it<T>>& prints, int cur_h)
 				}
 				else
 				{
-					n.value = -1;//заглушка
+					plug(n.value);//заглушка
 				}
 				prints.push_back(n);
 				if (p->right != nullptr)
@@ -369,7 +408,7 @@ void show(AVL_p<T>* p, int k, std::vector<Print_it<T>>& prints, int cur_h)
 				}
 				else
 				{
-					n.value = -1;
+					plug(n.value);//заглушка
 				}
 				prints.push_back(n);
 				show(p->left, 100, prints, cur_h - 1);
@@ -378,7 +417,7 @@ void show(AVL_p<T>* p, int k, std::vector<Print_it<T>>& prints, int cur_h)
 			else
 			{
 				n.level = cur_h;
-				n.value = -1;
+				plug(n.value);//заглушка
 				prints.push_back(n);
 				prints.push_back(n);
 				show(p->left, 101, prints, cur_h - 1);
@@ -419,16 +458,37 @@ int main()
 	}
 	show_tree(tree0);
 	tmp.value = 7;
-	delete_from_tree(tree0, tmp.value);
+	remove_from_tree(tree0, tmp.value);
 	std::cout << "----------------------\n";
 	show_tree(tree0);
     tmp.value = 1;
-	delete_from_tree(tree0, tmp.value);
+	remove_from_tree(tree0, tmp.value);
 	std::cout << "----------------------\n";
 	show_tree(tree0);
 	tmp.value = 3;
-	delete_from_tree(tree0, tmp.value);
+	remove_from_tree(tree0, tmp.value);
 	std::cout << "----------------------\n";
 	show_tree(tree0);
 	delete_tree(tree0);
+	std::cout << "----------------------\n";
+	AVL_tree<pair_temp> tree1;
+	consrtuct_tree(tree1);
+	pair_temp p0 = { 1, "abc" };
+	pair_temp p1 = { 2, "def" };
+	pair_temp p2 = { 5, "ghi" };
+	pair_temp p3 = { 7, "jkl" };
+	pair_temp p4 = { 3, "mno" };
+	pair_temp p5 = { 9, "pqr" };
+	pair_temp p6 = { 6, "stu" };
+	pair_temp p7 = { 4, "vwx" };
+	insert_tree(tree1, p0);
+	insert_tree(tree1, p1);
+	insert_tree(tree1, p2);
+	insert_tree(tree1, p3);
+	insert_tree(tree1, p4);
+	insert_tree(tree1, p5);
+	insert_tree(tree1, p6);
+	insert_tree(tree1, p7);
+	show_tree(tree1);
+	delete_tree(tree1);
 }
