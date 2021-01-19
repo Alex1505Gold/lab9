@@ -222,6 +222,19 @@ AVL_p<T>* find_max(AVL_p<T>* p)
 }
 
 temp
+AVL_p<T>* find_min(AVL_p<T>* p)
+{
+	if (p->left != nullptr)
+	{
+		return find_max(p->left);
+	}
+	else
+	{
+		return p;
+	}
+}
+
+temp
 AVL_p<T>* find_prev_max(AVL_p<T>* p, AVL_p<T>* max)
 {
 	if (p == max)
@@ -235,6 +248,23 @@ AVL_p<T>* find_prev_max(AVL_p<T>* p, AVL_p<T>* max)
 	else
 	{
 		return find_prev_max(p->right, max);
+	}
+}
+
+temp
+AVL_p<T>* find_prev_min(AVL_p<T>* p, AVL_p<T>* min)
+{
+	if (p == min)
+	{
+		return p;
+	}
+	if (p->left == min)
+	{
+		return p;
+	}
+	else
+	{
+		return find_prev_min(p->left, min);
 	}
 }
 
@@ -263,6 +293,24 @@ AVL_p<T>* delete_node(AVL_p<T>* p, T n)
 		{
 			return nullptr;
 		}
+		else if (cur_left == nullptr && cur_right != nullptr)
+		{
+			AVL_p<T>* min = find_min(cur_right);
+			AVL_p<T>* prev_min = find_prev_min(cur_right, min);
+			if (prev_min == min)  //ситуация, что самый близкий к р это его правый элемент
+			{
+				min->left = cur_left;
+				return (balance(min));
+			}
+			else
+			{
+				prev_min->left = min->right;
+				prev_min = balance(prev_min);
+				min->right = cur_right;
+				min->left = cur_left;
+				return balance(min);
+			}
+		}
 		else
 		{
 			AVL_p<T>* max = find_max(cur_left);
@@ -280,8 +328,7 @@ AVL_p<T>* delete_node(AVL_p<T>* p, T n)
 					max->left = cur_left;
 					max->right = cur_right;
 					return balance(max);
-				}
-			
+				}			
 		}
 	}
 	return balance(p);
@@ -455,7 +502,7 @@ int main()
 	remove_from_tree(tree0, 1);
 	std::cout << "----------------------\n";
 	show_tree(tree0);
-	remove_from_tree(tree0, 3);
+	remove_from_tree(tree0, 0);
 	std::cout << "----------------------\n";
 	show_tree(tree0);
 	delete_tree(tree0);
